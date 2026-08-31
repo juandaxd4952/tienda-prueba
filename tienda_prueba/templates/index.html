@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tienda de prueba</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<header>
+
+    <h1>Mi tienda</h1>
+
+    <nav>
+        <a href="/">Inicio</a>
+        <a href="/productos">Productos</a>
+
+        {% if session.get("id_usuario") %}
+
+    <a href="/carrito">Carrito</a>
+    <a href="/pedidos">Mis pedidos</a>
+
+    {% if session.get("rol") == "admin" %}
+        <a href="/admin">Panel de administrador</a>
+    {% endif %}
+
+    <a href="/logout">Cerrar sesión</a>
+
+{% else %}
+
+            <a href="/login">Login</a>
+            <a href="/registro">Registrarse</a>
+
+        {% endif %}
+
+    </nav>
+
+</header>
+
+<main>
+
+    <h2>Tienda de prueba</h2>
+
+    {% if session.get("id_usuario") %}
+
+        <p>
+            Bienvenido,
+            {{ session.get("nombre") }}
+        </p>
+
+    {% else %}
+
+        <p>
+            Inicia sesión para comprar.
+        </p>
+
+    {% endif %}
+
+</main>
+
+</body>
+</html>

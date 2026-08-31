@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Panel de Administración</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            background: #f5f5f5;
+        }
+
+        h1 {
+            margin-bottom: 5px;
+        }
+
+        .menu {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .menu a {
+            padding: 12px 18px;
+            background: #222;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+
+        .menu a:hover {
+            background: #444;
+        }
+
+        .seccion {
+            background: white;
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 8px;
+        }
+
+        .producto,
+        .categoria {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 6px;
+            background: #fafafa;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 300px;
+            max-width: 100%;
+            padding: 8px;
+            margin: 5px 0 15px;
+        }
+
+        textarea {
+            min-height: 80px;
+        }
+
+        button {
+            padding: 9px 15px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .btn-crear {
+            background: #198754;
+            color: white;
+        }
+
+        .btn-editar {
+            background: #0d6efd;
+            color: white;
+        }
+
+        .btn-eliminar {
+            background: #dc3545;
+            color: white;
+        }
+
+        hr {
+            margin: 25px 0;
+            border: 0;
+            border-top: 1px solid #ddd;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <h1>⚙️ Panel de Administración</h1>
+
+    <p>
+        Bienvenido, {{ session.get("nombre") }}
+    </p>
+
+
+    <!-- ========================================= -->
+    <!-- MENÚ -->
+    <!-- ========================================= -->
+
+    <div class="menu">
+
+        <a href="#pedidos">
+            📦 Pedidos
+        </a>
+
+        <a href="#productos">
+            🛍️ Productos
+        </a>
+
+        <a href="#categorias">
+            📂 Categorías
+        </a>
+
+        <a href="#inventario">
+            📊 Inventario
+        </a>
+
+        <a href="#envios">
+            🚚 Envíos
+        </a>
+
+        <a href="#pagos">
+            💰 Caja
+        </a>
+
+        <a href="{{ url_for('logout') }}">
+            🚪 Cerrar sesión
+        </a>
+
+    </div>
+
+
+
+    <!-- ========================================= -->
+    <!-- PRODUCTOS -->
+    <!-- ========================================= -->
+
+    <div class="seccion" id="productos">
+
+        <h2>🛍️ Productos</h2>
+
+
+        <!-- CREAR PRODUCTO -->
+
+        <h3>➕ Agregar producto</h3>
+
+        <form
+            method="POST"
+            action="{{ url_for('producto_nuevo') }}"
+        >
+
+            <label>
+                Nombre:
+            </label>
+
+            <br>
+
+            <input
+                type="text"
+                name="nombre"
+                required
+            >
+
+            <br>
+
+
+            <label>
+                Descripción:
+            </label>
+
+            <br>
+
+            <textarea
+                name="descripcion"
+                required
+            ></textarea>
+
+            <br>
+
+
+            <label>
+                Precio:
+            </label>
+
+            <br>
+
+            <input
+                type="number"
+                name="precio"
+                step="0.01"
+                min="0"
+                required
+            >
+
+            <br>
+
+
+            <label>
+                Categoría:
+            </label>
+
+            <br>
+
+            <select
+                name="id_categoria"
+                required
+            >
+
+                <option value="">
+                    Seleccionar categoría
+                </option>
+
+                {% for categoria in categorias %}
+
+                    <option value="{{ categoria[0] }}">
+                        {{ categoria[1] }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+            <br>
+
+
+            <label>
+                Stock inicial:
+            </label>
+
+            <br>
+
+            <input
+                type="number"
+                name="stock"
+                min="0"
+                required
+            >
+
+            <br>
+
+            <button
+                type="submit"
+                class="btn-crear"
+            >
+                ➕ Crear producto
+            </button>
+
+        </form>
+
+
+        <hr>
+
+
+        <!-- PRODUCTOS EXISTENTES -->
+
+        <h3>
+            Productos existentes
+        </h3>
+
+
+        {% if productos %}
+
+            {% for producto in productos %}
+
+                <div class="producto">
+
+                    <h3>
+                        {{ producto[1] }}
+                    </h3>
+
+                    <p>
+                        <strong>ID:</strong>
+                        {{ producto[0] }}
+                    </p>
+
+                    <p>
+                        <strong>Descripción:</strong>
+                        {{ producto[2] }}
+                    </p>
+
+                    <p>
+                        <strong>Precio:</strong>
+                        ${{ producto[3] }}
+                    </p>
+
+                    <p>
+                        <strong>Categoría:</strong>
+                        {{ producto[5] }}
+                    </p>
+
+                    <p>
+                        <strong>Stock:</strong>
+                        {{ producto[6] }}
+                    </p>
+
+
+                    <!-- EDITAR -->
+
+                    <a href="#editar-{{ producto[0] }}">
+
+                        <button
+                            type="button"
+                            class="btn-editar"
+                        >
+                            ✏️ Editar
+                        </button>
+
+                    </a>
+
+
+                    <!-- ELIMINAR -->
+
+                    <form
+                        method="POST"
+                        action="{{ url_for(
+                            'producto_eliminar',
+                            id_producto=producto[0]
+                        ) }}"
+                        style="display:inline;"
+                    >
+
+                        <button
+                            type="submit"
+                            class="btn-eliminar"
+                            onclick="return confirm('¿Seguro que quieres eliminar este producto?');"
+                        >
+                            🗑️ Eliminar
+                        </button>
+
+                    </form>
+
+
+                    <!-- FORMULARIO EDITAR -->
+
+                    <div
+                        id="editar-{{ producto[0] }}"
+                    >
+
+                        <hr>
+
+                        <h4>
+                            ✏️ Editar {{ producto[1] }}
+                        </h4>
+
+                        <form
+                            method="POST"
+                            action="{{ url_for(
+                                'producto_editar',
+                                id_producto=producto[0]
+                            ) }}"
+                        >
+
+                            <label>
+                                Nombre:
+                            </label>
+
+                            <br>
+
+                            <input
+                                type="text"
+                                name="nombre"
+                                value="{{ producto[1] }}"
+                                required
+                            >
+
+                            <br>
+
+
+                            <label>
+                                Descripción:
+                            </label>
+
+                            <br>
+
+                            <textarea
+                                name="descripcion"
+                                required
+                            >{{ producto[2] }}</textarea>
+
+                            <br>
+
+
+                            <label>
+                                Precio:
+                            </label>
+
+                            <br>
+
+                            <input
+                                type="number"
+                                name="precio"
+                                value="{{ producto[3] }}"
+                                step="0.01"
+                                min="0"
+                                required
+                            >
+
+                            <br>
+
+
+                            <label>
+                                Categoría:
+                            </label>
+
+                            <br>
+
+                            <select
+                                name="id_categoria"
+                                required
+                            >
+
+                                {% for categoria in categorias %}
+
+                                    <option
+                                        value="{{ categoria[0] }}"
+                                    >
+
+                                        {{ categoria[1] }}
+
+                                    </option>
+
+                                {% endfor %}
+
+                            </select>
+
+                            <br>
+
+
+                            <button
+                                type="submit"
+                                class="btn-editar"
+                            >
+                                💾 Guardar cambios
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <p>
+                No hay productos registrados.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+
+
+    <!-- ========================================= -->
+    <!-- PEDIDOS -->
+    <!-- ========================================= -->
+
+    <div class="seccion" id="pedidos">
+
+        <h2>📦 Pedidos</h2>
+
+        <p>
+            Aquí veremos los pedidos realizados por los clientes.
+        </p>
+
+        <a href="{{ url_for('pedidos_admin') }}">
+            Ver pedidos →
+        </a>
+
+    </div>
+
+
+
+    <!-- ========================================= -->
+    <!-- CATEGORÍAS -->
+    <!-- ========================================= -->
+
+    <div class="seccion" id="categorias">
+
+        <h2>📂 Categorías</h2>
+
+        <p>
+            Desde aquí puedes administrar las categorías
+            de los productos.
+        </p>
+
+
+        <!-- CREAR CATEGORÍA -->
+
+        <h3>
+            ➕ Crear categoría
+        </h3>
+
+        <form
+            method="POST"
+            action="{{ url_for('categoria_crear') }}"
+        >
+
+            <label>
+                Nombre de la categoría:
+            </label>
+
+            <br>
+
+            <input
+                type="text"
+                name="nombre"
+                placeholder="Ej: Panadería"
+                required
+            >
+
+            <br>
+
+            <button
+                type="submit"
+                class="btn-crear"
+            >
+                ➕ Crear categoría
+            </button>
+
+        </form>
+
+
+        <hr>
+
+
+        <!-- CATEGORÍAS EXISTENTES -->
+
+        <h3>
+            📋 Categorías existentes
+        </h3>
+
+
+        {% if categorias %}
+
+            {% for categoria in categorias %}
+
+                <div class="categoria">
+
+                    <p>
+                        <strong>
+                            ID:
+                        </strong>
+
+                        {{ categoria[0] }}
+                    </p>
+
+
+                    <form
+                        method="POST"
+                        action="{{ url_for(
+                            'categoria_editar',
+                            id_categoria=categoria[0]
+                        ) }}"
+                    >
+
+                        <label>
+                            Nombre:
+                        </label>
+
+                        <br>
+
+                        <input
+                            type="text"
+                            name="nombre"
+                            value="{{ categoria[1] }}"
+                            required
+                        >
+
+                        <br>
+
+                        <button
+                            type="submit"
+                            class="btn-editar"
+                        >
+                            ✏️ Guardar nombre
+                        </button>
+
+                    </form>
+
+
+                    <br>
+
+
+                    <form
+                        method="POST"
+                        action="{{ url_for(
+                            'categoria_eliminar',
+                            id_categoria=categoria[0]
+                        ) }}"
+                    >
+
+                        <button
+                            type="submit"
+                            class="btn-eliminar"
+                            onclick="return confirm('¿Seguro que quieres eliminar esta categoría?');"
+                        >
+                            🗑️ Eliminar categoría
+                        </button>
+
+                    </form>
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <p>
+                No hay categorías registradas.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+
+
+    <!-- ========================================= -->
+    <!-- INVENTARIO -->
+    <!-- ========================================= -->
+
+    <div class="seccion" id="inventario">
+
+    <h2>📊 Inventario</h2>
+
+    <p>
+        Desde aquí puedes controlar las existencias
+        de todos los productos.
+    </p>
+
+
+    {% if productos %}
+
+        {% for producto in productos %}
+
+            <div class="producto">
+
+                <h3>
+                    {{ producto[1] }}
+                </h3>
+
+                <p>
+                    <strong>ID del producto:</strong>
+                    {{ producto[0] }}
+                </p>
+
+                <p>
+                    <strong>Categoría:</strong>
+                    {{ producto[5] }}
+                </p>
+
+
+                <p>
+                    <strong>Stock actual:</strong>
+
+                    {% if producto[6] == 0 %}
+
+                        <span style="color:red;">
+                            ⚠️ Agotado
+                        </span>
+
+                    {% elif producto[6] <= 5 %}
+
+                        <span style="color:#d97706;">
+                            ⚠️ {{ producto[6] }} unidades
+                        </span>
+
+                    {% else %}
+
+                        <span>
+                            {{ producto[6] }} unidades
+                        </span>
+
+                    {% endif %}
+
+                </p>
+
+
+                <form
+                    method="POST"
+                    action="{{ url_for(
+                        'inventario_actualizar',
+                        id_producto=producto[0]
+                    ) }}"
+                >
+
+                    <label>
+                        Nuevo stock:
+                    </label>
+
+                    <br>
+
+                    <input
+                        type="number"
+                        name="stock"
+                        value="{{ producto[6] }}"
+                        min="0"
+                        required
+                    >
+
+                    <br>
+
+                    <button
+                        type="submit"
+                        class="btn-editar"
+                    >
+                        💾 Actualizar stock
+                    </button>
+
+                </form>
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <p>
+            No hay productos registrados.
+        </p>
+
+    {% endif %}
+
+</div>
+
+
+
+    <!-- ========================================= -->
+    <!-- ENVÍOS -->
+    <!-- ========================================= -->
+
+    <div class="seccion" id="envios">
+
+    <h2>🚚 Envíos</h2>
+
+    <p>
+        Administración de los envíos de los pedidos.
+    </p>
+
+
+    {% if envios %}
+
+        {% for envio in envios %}
+
+            <div class="producto">
+
+                <h3>
+                    📦 Pedido #{{ envio[0] }}
+                </h3>
+
+
+                <p>
+                    <strong>Cliente:</strong>
+                    {{ envio[1] }}
+                </p>
+
+
+                <p>
+                    <strong>Panadería:</strong>
+                    {{ envio[2] }}
+                </p>
+
+
+                <p>
+                    <strong>Dirección:</strong>
+                    {{ envio[3] }}
+                </p>
+
+
+                <p>
+                    <strong>Total:</strong>
+                    ${{ envio[4] }}
+                </p>
+
+
+                <p>
+                    <strong>Estado del pago:</strong>
+
+                    {% if envio[5] == "Pagado" %}
+
+                        <span style="color:green;">
+                            ✅ Pagado
+                        </span>
+
+                    {% else %}
+
+                        <span style="color:red;">
+                            ⚠️ {{ envio[5] }}
+                        </span>
+
+                    {% endif %}
+
+                </p>
+
+
+                <p>
+                    <strong>Estado del envío:</strong>
+
+                    {{ envio[6] }}
+
+                </p>
+
+
+                <form
+                    method="POST"
+                    action="{{ url_for(
+                        'envio_actualizar',
+                        id_pedido=envio[]
+                    ) }}"
+                >
+
+                    <label>
+                        Cambiar estado:
+                    </label>
+
+                    <br>
+
+
+                    <select
+    name="estado"
+    required
+>
+
+    <option
+        value="pendiente"
+        {% if envio[6] == "pendiente" %}
+            selected
+        {% endif %}
+    >
+        ⏳ Pendiente
+    </option>
+
+    <option
+        value="preparando"
+        {% if envio[6] == "preparando" %}
+            selected
+        {% endif %}
+    >
+        📦 Preparando
+    </option>
+
+    <option
+        value="enviado"
+        {% if envio[6] == "enviado" %}
+            selected
+        {% endif %}
+    >
+        🚚 Enviado
+    </option>
+
+    <option
+        value="entregado"
+        {% if envio[6] == "entregado" %}
+            selected
+        {% endif %}
+    >
+        ✅ Entregado
+    </option>
+
+    <option
+        value="cancelado"
+        {% if envio[6] == "cancelado" %}
+            selected
+        {% endif %}
+    >
+        ❌ Cancelado
+    </option>
+
+</select>
+
+                    <br>
+
+
+                    <button
+                        type="submit"
+                        class="btn-editar"
+                    >
+                        💾 Actualizar envío
+                    </button>
+
+                </form>
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <p>
+            📭 No hay envíos registrados.
+        </p>
+
+    {% endif %}
+
+</div>
+
+
+
+    <!-- ========================================= -->
+    <!-- PAGOS / CAJA -->
+    <!-- ========================================= -->
+
+    <div class="seccion" id="pagos">
+
+        <h2>💰 Caja</h2>
+
+        <p>
+            Aquí mostraremos cuánto dinero se ha recibido:
+        </p>
+
+        <ul>
+
+            <li>
+                📅 Hoy
+            </li>
+
+            <li>
+                📆 Esta semana
+            </li>
+
+            <li>
+                🗓️ Este año
+            </li>
+
+        </ul>
+
+        <p>
+            🚧 Próximamente
+        </p>
+
+    </div>
+
+
+</body>
+
+</html>

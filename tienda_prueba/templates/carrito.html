@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Mi carrito</title>
+
+</head>
+
+<body>
+
+    <h1>🛒 Mi carrito</h1>
+
+
+    {% if items %}
+
+
+        {% for item in items %}
+
+            <div>
+
+                <h2>
+                    {{ item[2] }}
+                </h2>
+
+                <p>
+                    Precio:
+                    ${{ item[3] }}
+                </p>
+
+                <p>
+                    Cantidad:
+                    {{ item[4] }}
+                </p>
+
+                <p>
+                    Subtotal:
+                    ${{ item[5] }}
+                </p>
+
+            </div>
+
+            <hr>
+
+        {% endfor %}
+
+
+        <br>
+
+
+        <!-- ========================= -->
+        <!-- BOTÓN DE PAGO -->
+        <!-- ========================= -->
+
+        <form
+            action="{{ url_for('pago') }}"
+            method="GET"
+        >
+
+            <button type="submit">
+
+                💳 Pagar
+
+            </button>
+
+        </form>
+
+
+    {% else %}
+
+
+        <p>
+            Tu carrito está vacío.
+        </p>
+
+
+    {% endif %}
+
+
+    <br>
+
+
+    <a href="{{ url_for('productos') }}">
+
+        ← Seguir comprando
+
+    </a>
+
+
+</body>
+
+</html>

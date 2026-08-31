@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Nuevo producto</title>
+
+</head>
+
+<body>
+
+    <h1>➕ Agregar producto</h1>
+
+    <form
+        action="{{ url_for('producto_nuevo') }}"
+        method="POST"
+    >
+
+        <label>
+            Nombre:
+        </label>
+
+        <br>
+
+        <input
+            type="text"
+            name="nombre"
+            required
+        >
+
+        <br>
+        <br>
+
+
+        <label>
+            Descripción:
+        </label>
+
+        <br>
+
+        <textarea
+            name="descripcion"
+            required
+        ></textarea>
+
+        <br>
+        <br>
+
+
+        <label>
+            Precio:
+        </label>
+
+        <br>
+
+        <input
+            type="number"
+            name="precio"
+            min="0"
+            step="0.01"
+            required
+        >
+
+        <br>
+        <br>
+
+
+        <label>
+            Categoría:
+        </label>
+
+        <br>
+
+        <select
+            name="id_categoria"
+            required
+        >
+
+            <option value="">
+                Seleccionar categoría
+            </option>
+
+            {% for categoria in categorias %}
+
+                <option value="{{ categoria[0] }}">
+
+                    {{ categoria[1] }}
+
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+        <br>
+        <br>
+
+
+        <label>
+            Stock inicial:
+        </label>
+
+        <br>
+
+        <input
+            type="number"
+            name="stock"
+            min="0"
+            required
+        >
+
+        <br>
+        <br>
+
+
+        <button type="submit">
+
+            💾 Guardar producto
+
+        </button>
+
+    </form>
+
+
+    <br>
+
+
+    <a href="{{ url_for('productos_admin') }}">
+
+        ← Cancelar
+
+    </a>
+
+</body>
+
+</html>

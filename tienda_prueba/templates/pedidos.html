@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Mis pedidos</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            background: #f8f9fa;
+            color: #222;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+        }
+
+        .pedido {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 14px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+        }
+
+        .pedido h2 {
+            margin-top: 0;
+        }
+
+        .estado {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .preparando {
+            color: #d97706;
+        }
+
+        .enviado {
+            color: #2563eb;
+        }
+
+        .entregado {
+            color: #16a34a;
+        }
+
+        .cancelado {
+            color: #dc2626;
+        }
+
+
+        /* =========================================
+           BARRA DE PROGRESO
+           ========================================= */
+
+        .progreso {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+
+            margin: 40px 10px 20px;
+
+            --progreso: 0%;
+        }
+
+
+        /* Línea gris */
+
+        .progreso::before {
+            content: "";
+
+            position: absolute;
+
+            top: 18px;
+
+            left: 6%;
+            right: 6%;
+
+            height: 6px;
+
+            background: #d1d5db;
+
+            border-radius: 10px;
+
+            z-index: 0;
+        }
+
+
+        /* Línea verde */
+
+        .progreso::after {
+            content: "";
+
+            position: absolute;
+
+            top: 18px;
+
+            left: 6%;
+
+            width: var(--progreso);
+
+            height: 6px;
+
+            background: #16a34a;
+
+            border-radius: 10px;
+
+            z-index: 1;
+
+            transition: width 0.6s ease;
+        }
+
+
+        /* =========================================
+           CADA PASO
+           ========================================= */
+
+        .paso {
+            position: relative;
+
+            z-index: 2;
+
+            width: 25%;
+
+            text-align: center;
+
+            font-size: 13px;
+
+            color: #6b7280;
+
+            font-weight: normal;
+        }
+
+
+        /* Círculo */
+
+        .circulo {
+            width: 40px;
+            height: 40px;
+
+            margin: 0 auto 9px;
+
+            border-radius: 50%;
+
+            background: #d1d5db;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            font-size: 18px;
+
+            border: 4px solid white;
+
+            transition:
+                background 0.4s ease,
+                transform 0.4s ease;
+        }
+
+
+        /* Paso activo */
+
+        .paso.activo {
+            color: #16a34a;
+
+            font-weight: bold;
+        }
+
+        .paso.activo .circulo {
+            background: #16a34a;
+
+            color: white;
+
+            transform: scale(1.05);
+        }
+
+
+        /* =========================================
+           MENSAJE DE CANCELADO
+           ========================================= */
+
+        .estado.cancelado {
+            color: #dc2626;
+        }
+
+
+        /* =========================================
+           RESPONSIVE
+           ========================================= */
+
+        @media (max-width: 600px) {
+
+            body {
+                margin: 15px;
+            }
+
+            .pedido {
+                padding: 18px;
+            }
+
+            .paso {
+                font-size: 11px;
+            }
+
+            .circulo {
+                width: 34px;
+                height: 34px;
+
+                font-size: 15px;
+            }
+
+            .progreso {
+                margin-left: 0;
+                margin-right: 0;
+            }
+
+        }
+
+        a {
+            text-decoration: none;
+
+            color: #2563eb;
+
+            font-weight: bold;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <h1>📦 Mis pedidos</h1>
+
+
+    {% if pedidos %}
+
+
+        {% for pedido in pedidos %}
+
+
+            <div class="pedido">
+
+
+                <!-- =====================================
+                     INFORMACIÓN DEL PEDIDO
+                     ===================================== -->
+
+
+                <h2>
+                    Pedido #{{ pedido[0] }}
+                </h2>
+
+
+                <p>
+                    <strong>Fecha:</strong>
+                    {{ pedido[1] }}
+                </p>
+
+
+                <p>
+                    <strong>Total:</strong>
+                    ${{ pedido[2] }}
+                </p>
+
+
+                <p>
+                    <strong>Estado del pedido:</strong>
+                    {{ pedido[3] }}
+                </p>
+
+
+                <!-- =====================================
+                     ESTADO DEL ENVÍO
+                     ===================================== -->
+
+
+                {% set estado_envio = pedido[4] %}
+
+
+                <!-- =====================================
+                     PENDIENTE
+                     ===================================== -->
+
+
+                {% if estado_envio == "pendiente" %}
+
+
+                    <div class="estado">
+
+                        🛒 Tu pedido fue recibido
+
+                    </div>
+
+
+                    <div
+                        class="progreso"
+                        style="--progreso: 0%;"
+                    >
+
+
+                        <div class="paso activo">
+
+                            <div class="circulo">
+                                🛒
+                            </div>
+
+                            Pedido
+
+                        </div>
+
+
+                        <div class="paso">
+
+                            <div class="circulo">
+                                📦
+                            </div>
+
+                            Preparando
+
+                        </div>
+
+
+                        <div class="paso">
+
+                            <div class="circulo">
+                                🚚
+                            </div>
+
+                            Enviado
+
+                        </div>
+
+
+                        <div class="paso">
+
+                            <div class="circulo">
+                                ✅
+                            </div>
+
+                            Entregado
+
+                        </div>
+
+
+                    </div>
+
+
+                <!-- =====================================
+                     PREPARANDO
+                     ===================================== -->
+
+
+                {% elif estado_envio == "preparando" %}
+
+
+                    <div class="estado preparando">
+
+                        📦 Tu pedido se está preparando
+
+                    </div>
+
+
+                    <div
+                        class="progreso"
+                        style="--progreso: 29%;"
+                    >
+
+
+                        <div class="paso activo">
+
+                            <div class="circulo">
+                                🛒
+                            </div>
+
+                            Pedido
+
+                        </div>
+
+
+                        <div class="paso activo">
+
+                            <div class="circulo">
+                                📦
+                            </div>
+
+                            Preparando
+
+                        </div>
+
+
+                        <div class="paso">
+
+                            <div class="circulo">
+                                🚚
+                            </div>
+
+                            Enviado
+
+                        </div>
+
+
+                        <div class="paso">
+
+                            <div class="circulo">
+                                ✅
+                            </div>
+
+                            Entregado
+
+                        </div>
+
+
+                    </div>
+
+
+                <!-- =====================================
+                     ENVIADO
+                     ===================================== -->
+
+
+                {% elif estado_envio == "enviado" %}
+
+
+                    <div class="estado enviado">
+
+                        🚚 Tu pedido ya fue enviado
+
+                    </div>
+
+
+                    <div
+                        class="progreso"
+                        style="--progreso: 62%;"
+                    >
+
+
+                        <div class="paso activo">
+
+                            <div class="circulo">
+                                🛒
+                            </div>
+
+                            Pedido
+
+                        </div>
+
+
+                        <div class="paso activo">
+
+                            <div class="circulo">
+                                📦
+                            </div>
+
+                            Preparando
+
+                        </div>
+
+
+                        <div class="paso activo">
+
+                            <div class="circulo">
+                                🚚
+                            </div>
+
+                            Enviado
+
+                        </div>
+
+
+                        <div class="paso">
+
+                            <div class="circulo">
+                                ✅
+                            </div>
+
+                            Entregado
+
+                        </div>
+
+
+                    </div>
+
+
+                <!-- =====================================
+                     ENTREGADO
+                     ===================================== -->
+
+
+                {% elif estado_envio == "entregado" %}
+
+
+                    <div class="estado entregado">
+
+                        ✅ ¡Tu pedido ya fue entregado!
+
+                    </div>
+
+
+                    <div
+                        class="progreso"
+                        style="--progreso: 88%;"
+                    >
+
+
+                        <div class="paso activo">
+
+                            <div class="circulo">
+                                🛒
+                            </div>
+
+                            Pedido
+
+                        </div>
+
+
+                        <div class="paso activo">
+
+                            <div class="circulo">
+                                📦
+                            </div>
+
+                            Preparando
+
+                        </div>
+
+
+                        <div class="paso activo">
+
+                            <div class="circulo">
+                                🚚
+                            </div>
+
+                            Enviado
+
+                        </div>
+
+
+                        <div class="paso activo">
+
+                            <div class="circulo">
+                                ✅
+                            </div>
+
+                            Entregado
+
+                        </div>
+
+
+                    </div>
+
+
+                <!-- =====================================
+                     CANCELADO
+                     ===================================== -->
+
+
+                {% elif estado_envio == "cancelado" %}
+
+
+                    <div class="estado cancelado">
+
+                        ❌ Este envío fue cancelado
+
+                    </div>
+
+
+                {% endif %}
+
+
+            </div>
+
+
+        {% endfor %}
+
+
+    {% else %}
+
+
+        <p>
+
+            📭 Todavía no tienes pedidos.
+
+        </p>
+
+
+    {% endif %}
+
+
+    <br>
+
+
+    <a href="{{ url_for('productos') }}">
+
+        ← Seguir comprando
+
+    </a>
+
+
+</body>
+
+</html>

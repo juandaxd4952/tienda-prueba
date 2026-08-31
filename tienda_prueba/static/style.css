@@ -1,0 +1,135 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 40px;
+    background: #f4f4f4;
+}
+
+nav {
+    margin-bottom: 30px;
+}
+
+nav a {
+    margin-right: 15px;
+}
+
+.productos {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.producto {
+    background: white;
+    padding: 20px;
+    width: 220px;
+    border-radius: 10px;
+}
+
+button {
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+/* =========================
+   PANEL ADMINISTRADOR
+========================= */
+
+.admin-grid {
+
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 25px;
+
+    margin-top: 30px;
+
+}
+
+
+.admin-card {
+
+    padding: 25px;
+
+    border-radius: 15px;
+
+    background: #1e1e1e;
+
+    border: 1px solid #444;
+
+    transition: 0.3s;
+
+}
+
+
+.admin-card:hover {
+
+    transform: translateY(-5px);
+
+}
+
+
+.admin-card h3 {
+
+    margin-top: 0;
+
+    font-size: 22px;
+
+}
+
+
+.admin-card p {
+
+    color: #ccc;
+
+    min-height: 60px;
+
+}
+
+
+.admin-card a {
+
+    display: inline-block;
+
+    margin-top: 15px;
+
+    padding: 10px 18px;
+
+    border-radius: 8px;
+
+    text-decoration: none;
+
+    background: #8b0000;
+
+    color: white;
+
+}
+
+
+.admin-card a:hover {
+
+    background: #b30000;
+
+}
+
+
+@media (max-width: 900px) {
+
+    .admin-grid {
+
+        grid-template-columns: repeat(2, 1fr);
+
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .admin-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+}
