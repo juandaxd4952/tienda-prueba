@@ -191,7 +191,7 @@ def login():
                     nombre_panaderia,
                     nombre_encargado,
                     correo,
-                    password_hash,
+                    password,
                     rol
                 FROM usuarios
                 WHERE correo = %s
